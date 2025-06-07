@@ -3,3 +3,5 @@ const HomePage = ({ children }) => {
 };
 
 export default HomePage;
+
+// By default, this component is being rendered on the server.

@@ -6,3 +6,5 @@ const config = {
 };
 
 export default config;
+
+// This file and the code above is where we configure tailwinds for our project
