@@ -1,12 +1,15 @@
-// Importing Link to navigate to ather pages
-import Link from "next/link";
+// Import the Hero component
+import Hero from "@/components/Hero";
+
+// Import the InfoBoxes Component
+import InfoBoxes from "@/components/InfoBoxes";
 
 const HomePage = ({ children }) => {
   return (
-    <div>
-      <h1 className="text-3xl">Welcome</h1>
-      <Link href="/properties">Go to Properties</Link>
-    </div>
+    <>
+      <Hero />
+      <InfoBoxes />
+    </>
   );
 };
 

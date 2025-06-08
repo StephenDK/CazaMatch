@@ -2,6 +2,8 @@ import "@/assets/styles/globals.css";
 
 // Importing the Navbar component:
 import Navbar from "@/components/Navbar";
+// Importing the Footer component
+import Footer from "@/components/Footer";
 
 // The metadata object sets the HTML head field.
 // If we dont add it to individual pages, this will be the meta data for all pages!!
@@ -18,6 +20,7 @@ const MainLayout = ({ children }) => {
       <body>
         <Navbar />
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
