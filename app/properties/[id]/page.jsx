@@ -1,13 +1,38 @@
 // Server Component:
 // Below is how we use the same client side hooks but on the server side.
+import Link from "next/link";
+import connectDB from "@/config/database";
+import Property from "@/models/Property";
+import PropertyHeaderImage from "@/components/PropertyHeaderImage";
+import PropertyDetails from "@/components/PropertyDetails";
+import { FaArrowLeft } from "react-icons/fa";
+
 const PropertyPage = async ({ params, searchParams }) => {
   const resolvedParams = await params;
-  const resolvedSearchParams = await searchParams;
+  await connectDB();
+  const property = await Property.findById(resolvedParams.id).lean();
+  // const resolvedSearchParams = await searchParams;
   return (
-    <div>
-      <h2>Property Page Params: {resolvedParams.id}</h2>
-      <h2>Property page Search Params: {resolvedSearchParams.name}</h2>
-    </div>
+    <>
+      <PropertyHeaderImage image={property.images[0]} />
+      <section>
+        <div className="container m-auto py-6 px-6">
+          <Link
+            href="/properties"
+            className="text-blue-500 hover:text-blue-600 flex items-center"
+          >
+            <FaArrowLeft className="mr-2" /> Back to Properties
+          </Link>
+        </div>
+      </section>
+      <section className="bg-blue-50">
+        <div className="container m-auto py-10 px-6">
+          <div className="grid grid-cols-1 md:grid-cols-70/30 w-full gap-6">
+            <PropertyDetails property={property} />
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 
