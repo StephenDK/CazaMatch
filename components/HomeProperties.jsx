@@ -1,9 +1,16 @@
-import Properties from "@/properties.json";
+import connectDB from "@/config/database";
+import Property from "@/models/Property";
+
 import PropertyCard from "./PropertyCard";
 import Link from "next/link";
 
-const HomeProperties = () => {
-  const recentProperties = Properties.slice(0, 3);
+const HomeProperties = async () => {
+  await connectDB();
+
+  const recentProperties = await Property.find({})
+    .sort({ createdAt: -1 })
+    .limit(3)
+    .lean();
 
   return (
     <>
@@ -12,7 +19,7 @@ const HomeProperties = () => {
           <h2 className="text-3xl font-bold text-blue-500 mb-6 text-center">
             Recent Properties
           </h2>
-          {Properties.length === 0 ? (
+          {recentProperties.length === 0 ? (
             <p>No Properties Found</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
