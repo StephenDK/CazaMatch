@@ -27,6 +27,7 @@ export const authOptions = {
       // 1. Get the user from the database
       // 2. Assign user id from the session
       // 3. Return session
+      return session;
     },
   },
 };
