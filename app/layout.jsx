@@ -5,24 +5,28 @@ import Navbar from "@/components/Navbar";
 // Importing the Footer component
 import Footer from "@/components/Footer";
 
+// Authprovider import
+import AuthProvider from "@/components/AuthProvider";
 // The metadata object sets the HTML head field.
 // If we dont add it to individual pages, this will be the meta data for all pages!!
 // You can view the meta data the HTML head tag in Google developer tools.
 export const metadata = {
-  title: "CazaMatch",
+  title: "RealtorMatch",
   keywords: "rental, property, real estate",
   description: "Find the perfect realtor",
 };
 
 const MainLayout = ({ children }) => {
   return (
-    <html>
-      <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-      </body>
-    </html>
+    <AuthProvider>
+      <html>
+        <body>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </body>
+      </html>
+    </AuthProvider>
   );
 };
 
