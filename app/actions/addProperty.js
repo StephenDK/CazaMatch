@@ -2,15 +2,14 @@
 
 import connectDB from "@/config/database";
 import Property from "@/models/Property";
-// Get session user helper
 import { getSessionUser } from "@/utils/getSessionUser";
-
-// The import below is used to update the listings once submitted
 import { revalidatePath } from "next/cache";
-
 import { redirect } from "next/navigation";
+import cloudinary from "@/config/cloudinary";
 
 async function addProperty(formData) {
+  console.log("[ADD PROPERTY ACTION]");
+
   await connectDB();
 
   const sessionUser = await getSessionUser();
@@ -21,20 +20,13 @@ async function addProperty(formData) {
 
   const { userId } = sessionUser;
 
-  console.log("[ADD PROPERTY ACTION]");
-  // Getting data from the form.
-  // Server actions are added to the action filed in a html form element
-  //   console.log("[FORM DATA]: ", formData.get("name"));
-
   // Get amenities
   console.log("[FORM DATA AMENITIES]: ", formData.getAll("amenities"));
   const amenities = formData.getAll("amenities");
-  // Get images
-  const images = formData
-    .getAll("images")
-    .filter((image) => image.name !== "")
-    .map((image) => image.name);
-  console.log("[FORMATTED FORM DATA IMAGES]: ", images);
+
+  // Get images and filter out empty files
+  console.log("[FORMATTED FORM DATA IMAGES]: ", formData.getAll("images"));
+  const images = formData.getAll("images").filter((image) => image.name !== "");
 
   const propertyData = {
     owner: userId,
@@ -50,7 +42,6 @@ async function addProperty(formData) {
     beds: formData.get("beds"),
     baths: formData.get("baths"),
     square_feet: formData.get("square_feet"),
-    beds: formData.get("beds"),
     amenities,
     rates: {
       nightly: formData.get("rates.nightly"),
@@ -62,8 +53,58 @@ async function addProperty(formData) {
       email: formData.get("seller_info.email"),
       phone: formData.get("seller_info.phone"),
     },
-    images,
   };
+
+  const imageUrls = [];
+
+  for (const imageFile of images) {
+    // Validate file type
+    const validImageTypes = ["image/jpeg", "image/png", "image/webp"];
+    console.log(
+      `[PROCESSING IMAGE]: ${imageFile.name}, Type: ${imageFile.type}`
+    );
+    if (!validImageTypes.includes(imageFile.type)) {
+      throw new Error(
+        `Invalid file type for ${
+          imageFile.name
+        }. Supported types: ${validImageTypes.join(", ")}`
+      );
+    }
+
+    // Convert image file to buffer
+    const imageBuffer = await imageFile.arrayBuffer();
+    console.log(
+      `[IMAGE BUFFER SIZE]: ${imageFile.name}, Size: ${imageBuffer.byteLength} bytes`
+    );
+    const imageData = Buffer.from(imageBuffer);
+
+    // Convert to base64
+    const imageBase64 = imageData.toString("base64");
+    console.log(
+      `[BASE64 LENGTH]: ${imageFile.name}, Length: ${imageBase64.length}`
+    );
+
+    // Upload to Cloudinary with dynamic MIME type
+    try {
+      const result = await cloudinary.uploader.upload(
+        `data:${imageFile.type};base64,${imageBase64}`,
+        {
+          folder: "RealtorMatch",
+        }
+      );
+      console.log(
+        `[CLOUDINARY UPLOAD SUCCESS]: ${imageFile.name}, URL: ${result.secure_url}`
+      );
+      imageUrls.push(result.secure_url);
+    } catch (error) {
+      console.error(
+        `[CLOUDINARY UPLOAD ERROR]: ${imageFile.name}, Error: ${error.message}`
+      );
+      throw new Error(`Failed to upload ${imageFile.name}: ${error.message}`);
+    }
+  }
+
+  propertyData.images = imageUrls;
 
   console.log("[PROPERTY DATA]: ", propertyData);
 
