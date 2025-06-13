@@ -6,7 +6,7 @@ import { convertToSerializedObject } from "@/utils/convertToObject";
 const PropertyEditPage = async ({ params }) => {
   const param = await params;
   await connectDB();
-  const propertyDoc = await Property.findById(param.id);
+  const propertyDoc = await Property.findById(param.id).lean();
 
   const property = convertToSerializedObject(propertyDoc);
 
