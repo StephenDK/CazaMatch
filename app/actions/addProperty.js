@@ -1,6 +1,26 @@
 "use server";
 
+import connectDB from "@/config/database";
+import Property from "@/models/Property";
+// Get session user helper
+import { getSessionUser } from "@/utils/getSessionUser";
+
+// The import below is used to update the listings once submitted
+import { revalidatePath } from "next/cache";
+
+import { redirect } from "next/navigation";
+
 async function addProperty(formData) {
+  await connectDB();
+
+  const sessionUser = await getSessionUser();
+
+  if (!sessionUser || !sessionUser.userId) {
+    throw new Error("User ID is required");
+  }
+
+  const { userId } = sessionUser;
+
   console.log("[ADD PROPERTY ACTION]");
   // Getting data from the form.
   // Server actions are added to the action filed in a html form element
@@ -17,6 +37,7 @@ async function addProperty(formData) {
   console.log("[FORMATTED FORM DATA IMAGES]: ", images);
 
   const propertyData = {
+    owner: userId,
     type: formData.get("type"),
     name: formData.get("name"),
     description: formData.get("description"),
@@ -45,6 +66,14 @@ async function addProperty(formData) {
   };
 
   console.log("[PROPERTY DATA]: ", propertyData);
+
+  const newProperty = new Property(propertyData);
+
+  await newProperty.save();
+
+  revalidatePath("/", "layout");
+
+  redirect(`/properties/${newProperty._id}`);
 }
 
 export default addProperty;
