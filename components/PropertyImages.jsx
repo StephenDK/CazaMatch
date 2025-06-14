@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 const PropertyImages = ({ images }) => {
-  //   console.log("[Images]: ", images);
+  console.log("[Images]: ", images);
   return (
     <section className="bg-blue-50 p-4">
       <div className="container mx-auto">
@@ -9,8 +9,9 @@ const PropertyImages = ({ images }) => {
           <Image
             src={images[0]}
             alt=""
-            className="object-cover h-[400px] w-full rounded-xl"
-            fill={true}
+            className="object-cover h-[400px] mx-auto rounded-xl"
+            width={1800}
+            height={400}
             priority={true}
           />
         ) : (
