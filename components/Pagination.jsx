@@ -1,6 +1,7 @@
 import Link from "next/link";
 const Pagination = ({ page, pageSize, totalItems }) => {
   const totalPages = Math.ceil(totalItems / pageSize);
+
   return (
     <section className="container mx-auto flex justify-center items-center my-8">
       {page > 1 ? (
