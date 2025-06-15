@@ -21,16 +21,17 @@ const BookmarkButton = ({ property }) => {
     }
 
     checkBookmarkStatus(property._id).then((res) => {
-      console.log("Checking Bookmark Status");
+      console.log("[Checking Bookmark Status]: ", res.isBookmarked);
       if (res.error) {
         toast.error(res.error);
-      }
-      if (res.isBookmarked) {
-        setIsBookmarked(res.isBookmarked);
         setLoading(false);
+        console.log("[BOOKMARK ERROR]: ", res.error);
       }
+      console.log("[SETTING BOOKMARKED]:");
+      setIsBookmarked(res.isBookmarked || false);
+      setLoading(false);
     });
-  }, [property._id, userId, checkBookmarkStatus]);
+  }, [property._id, userId, isBookmarked]);
 
   const handleClick = async () => {
     if (!userId) {
