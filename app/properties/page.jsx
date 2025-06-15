@@ -3,11 +3,19 @@ import Property from "@/models/Property";
 
 import PropertyCard from "@/components/PropertyCard";
 
-const PropertiesPage = async () => {
+const PropertiesPage = async ({ searchParams }) => {
+  const params = await searchParams;
+  const { page = 1, pageSize = 2 } = params;
+  console.log("[PARAMS]: ", { page, pageSize });
+
   // Connect DB
   await connectDB();
 
-  const Properties = await Property.find({}).lean();
+  const skip = (page - 1) * pageSize;
+
+  const total = await Property.countDocuments({});
+
+  const Properties = await Property.find({}).skip(skip).limit(pageSize);
 
   return (
     <section className="px-4 py-6">
