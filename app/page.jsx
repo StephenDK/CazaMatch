@@ -7,11 +7,14 @@ import InfoBoxes from "@/components/InfoBoxes";
 // Import Home Properties Component
 import HomeProperties from "@/components/HomeProperties";
 
+import FeaturedProperties from "@/components/FeaturedProperties";
+
 const HomePage = ({ children }) => {
   return (
     <>
       <Hero />
       <InfoBoxes />
+      <FeaturedProperties />
       <HomeProperties />
     </>
   );
